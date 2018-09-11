@@ -16,6 +16,15 @@ function outputToJSON(json, path) {
 }
 
 (async () => {
+  regrest
+    .get("https://pokeapi.co/api/v2/pokemon/")
+    .then(({ json: { count } }) =>
+      regrest.get(`https://pokeapi.co/api/v2/pokemon/?limit=${count}&offset=0`)
+    )
+    .then(({ json: { results: pokemons } }) =>
+      outputToJSON(pokemons, "pokemons.json")
+    );
+
   const movesSite = await regrest.get(url.moves).then(res => res.text);
   const $ = cheerio.load(movesSite);
   const result = {};
