@@ -2,7 +2,9 @@ const regrest = require("regrest");
 const fs = require("fs");
 const cheerio = require("cheerio");
 const url = {
-  moves: "https://bulbapedia.bulbagarden.net/wiki/List_of_moves"
+  moves: "https://bulbapedia.bulbagarden.net/wiki/List_of_moves",
+  baseImageUrl:
+    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"
 };
 
 function outputToJSON(json, path) {
@@ -19,10 +21,21 @@ function outputToJSON(json, path) {
   regrest
     .get("https://pokeapi.co/api/v2/pokemon/")
     .then(({ json: { count } }) =>
-      regrest.get(`https://pokeapi.co/api/v2/pokemon/?limit=${count}&offset=0`)
-    )
-    .then(({ json: { results: pokemons } }) =>
-      outputToJSON(pokemons, "pokemons.json")
+      regrest
+        .get(`https://pokeapi.co/api/v2/pokemon/?limit=${count}&offset=0`)
+        .then(({ json: { results: pokemons } }) =>
+          outputToJSON(
+            {
+              count,
+              pokemons: pokemons.map((pokemon, index) => ({
+                ...pokemon,
+                id: index + 1,
+                imageUrl: `${url.baseImageUrl}${index + 1}.png`
+              }))
+            },
+            "pokemons.json"
+          )
+        )
     );
 
   const movesSite = await regrest.get(url.moves).then(res => res.text);
