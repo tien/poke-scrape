@@ -27,11 +27,14 @@ function outputToJSON(json, path) {
           outputToJSON(
             {
               count,
-              pokemons: pokemons.map((pokemon, index) => ({
-                ...pokemon,
-                id: index + 1,
-                imageUrl: `${url.baseImageUrl}${index + 1}.png`
-              }))
+              pokemons: pokemons.map((pokemon, index) => {
+                const id = parseInt(pokemon.url.split("/").slice(-2)[0]);
+                return {
+                  ...pokemon,
+                  id,
+                  imageUrl: `${url.baseImageUrl}${id}.png`
+                };
+              })
             },
             "pokemons.json"
           )
