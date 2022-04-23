@@ -1,15 +1,15 @@
-const regrest = require("regrest");
+const regrest = require("regrest").default;
 const fs = require("fs");
 const cheerio = require("cheerio");
 const url = {
   moves: "https://bulbapedia.bulbagarden.net/wiki/List_of_moves",
   baseImageUrl:
-    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"
+    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/",
 };
 
 function outputToJSON(json, path) {
   const data = JSON.stringify(json);
-  fs.writeFile(path, data, "utf8", err => {
+  fs.writeFile(path, data, "utf8", (err) => {
     if (err) {
       return console.log(err);
     }
@@ -32,16 +32,16 @@ function outputToJSON(json, path) {
                 return {
                   ...pokemon,
                   id,
-                  imageUrl: `${url.baseImageUrl}${id}.png`
+                  imageUrl: `${url.baseImageUrl}${id}.png`,
                 };
-              })
+              }),
             },
             "pokemons.json"
           )
         )
     );
 
-  const movesSite = await regrest.get(url.moves).then(res => res.text);
+  const movesSite = await regrest.get(url.moves).then((res) => res.text);
   const $ = cheerio.load(movesSite);
   const result = {};
   const rows = $("table.sortable > tbody > tr > td > table > tbody > tr");
